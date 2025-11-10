@@ -1,0 +1,16 @@
+# Archivos y carpetas que Visual Studio genera automáticamente
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+
+# Carpetas de dependencias
+packages/
+node_modules/
+
+# Archivos del sistema
+Thumbs.db
+*.DS_Store
