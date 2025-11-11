@@ -1,15 +1,28 @@
+
+using Proyecto.UI.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var apiBaseUrl = builder.Configuration.GetValue<string>("ApiSettings:BaseUrl");
+
+builder.Services.AddHttpClient("ApiCliente", client =>
+{
+    if (string.IsNullOrEmpty(apiBaseUrl))
+    {
+        throw new InvalidOperationException("La URL base de la API no está configurada en appsettings.json");
+    }
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddScoped<ServicioApi>();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
