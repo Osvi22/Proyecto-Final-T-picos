@@ -1,16 +1,43 @@
-﻿namespace Proyecto.Model
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Proyecto.Model
+
 {
+    [Table("Vehiculo")]
     public class Vehiculo
     {
         public int Id { get; set; }
-        public string Placa { get; set; }
-        public string Marca { get; set; }
-        public string Modelo { get; set; }
+        [Required(ErrorMessage = "La placa es obligatoria")]
+        [StringLength(50)]
+        public string Placa { get; set; } = null!;
 
+        [Required(ErrorMessage = "La marca es obligatoria")]
+        [StringLength(100)]
+        public string Marca { get; set; } = null!;
+
+        [Required(ErrorMessage = "El modelo es obligatorio")]
+        [StringLength(100)]
+        public string Modelo { get; set; } = null!;
         // Clave foránea para la relación con Persona
-        public int PersonaId { get; set; }
 
-        // Propiedad de navegación para el dueño
-        public virtual Persona? Dueno { get; set; }
+
+        public int PersonaId { get; set; }
+        public Persona Persona { get; set; } = null!;
+
+        //public string PersonaIdentificacion { get; set; } = null!;
+
     }
+
+    // DTO para edición
+    public class VehiculoEditarDto
+    {
+        public string Placa { get; set; } = null!;
+        public string Marca { get; set; } = null!;
+        public string Modelo { get; set; } = null!;
+        public int PersonaId { get; set; }
+        
+    }
+
+    
 }
