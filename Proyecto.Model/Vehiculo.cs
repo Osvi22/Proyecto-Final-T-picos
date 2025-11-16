@@ -19,17 +19,12 @@ namespace Proyecto.Model
         [Required(ErrorMessage = "El modelo es obligatorio")]
         [StringLength(100)]
         public string Modelo { get; set; } = null!;
-        // Clave foránea para la relación con Persona
-
 
         public int PersonaId { get; set; }
         public Persona Persona { get; set; } = null!;
 
-        //public string PersonaIdentificacion { get; set; } = null!;
-
     }
 
-    // DTO para edición
     public class VehiculoEditarDto
     {
         public string Placa { get; set; } = null!;
@@ -38,6 +33,5 @@ namespace Proyecto.Model
         public int PersonaId { get; set; }
         
     }
-
-    
+  
 }

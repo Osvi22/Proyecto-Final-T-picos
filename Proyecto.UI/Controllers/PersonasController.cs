@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Proyecto.Model;
 using Proyecto.UI.Services;
+using System.Diagnostics; // <-- Asegúrate de importar esto
+using Proyecto.UI.Models; // <-- Y de importar tu ErrorViewModel
 
 namespace Proyecto.UI.Controllers
 {
@@ -8,37 +10,35 @@ namespace Proyecto.UI.Controllers
     {
         private readonly ServicioApi _servicioApi;
 
-        // 1. Inyectamos el ServicioApi en el constructor
         public PersonasController(ServicioApi servicioApi)
         {
             _servicioApi = servicioApi;
         }
 
-        // GET: /Personas
-        // Muestra la lista de todas las personas
         public async Task<IActionResult> Index()
         {
             try
             {
                 var personas = await _servicioApi.ListarPersonasAsync();
-                return View(personas); // Pasa la lista a la vista
+                return View(personas);
             }
             catch (Exception ex)
             {
-                // Manejar el error (ej. mostrar una vista de error)
-                return View("Error", new { message = ex.Message });
+                // --- CORREGIDO ---
+                // Ahora pasamos el modelo correcto a la vista de Error.
+                return View("Error", new ErrorViewModel
+                {
+                    Message = ex.Message,
+                    RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+                });
             }
         }
 
-        // GET: /Personas/Create
-        // Muestra el formulario para crear una nueva persona
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: /Personas/Create
-        // Recibe los datos del formulario y los envía a la API
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Persona persona)
@@ -48,40 +48,50 @@ namespace Proyecto.UI.Controllers
                 try
                 {
                     await _servicioApi.CrearPersonaAsync(persona);
-                    return RedirectToAction(nameof(Index)); // Regresa a la lista
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", $"Error al crear la persona: {ex.Message}");
                 }
             }
-            return View(persona); // Muestra el formulario de nuevo con errores
+            return View(persona);
         }
 
-        // GET: /Personas/Edit/5
-        // Muestra el formulario para editar una persona
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(string identificacion)
         {
+            if (string.IsNullOrEmpty(identificacion))
+            {
+                return BadRequest("La identificación no puede ser nula.");
+            }
+
             try
             {
-                var persona = await _servicioApi.ObtenerPersonaPorIdAsync(id);
+                var persona = await _servicioApi.ObtenerPersonaPorIdentificacionAsync(identificacion);
+                if (persona == null)
+                {
+                    return NotFound();
+                }
                 return View(persona);
             }
             catch (Exception ex)
             {
-                return View("Error", new { message = ex.Message });
+                // --- CORREGIDO ---
+                return View("Error", new ErrorViewModel
+                {
+                    Message = ex.Message,
+                    RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+                });
             }
         }
 
-        // POST: /Personas/Edit/5
-        // Recibe los datos del formulario y los envía a la API
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Persona persona)
+        public async Task<IActionResult> Edit(string identificacion, Persona persona)
         {
-            if (id != persona.Id)
+            if (identificacion != persona.Identificacion)
             {
-                return BadRequest();
+                return BadRequest("La identificación de la ruta no coincide con la del formulario.");
             }
 
             if (ModelState.IsValid)

@@ -28,7 +28,5 @@ namespace Proyecto.Model
         [Range(0, double.MaxValue, ErrorMessage = "El salario debe ser mayor o igual a 0")]
         public decimal Salario { get; set; }
 
-        // Propiedad de navegación (opcional pero recomendada)
-        // public ICollection<Vehiculo> Vehiculos { get; set; } = new List<Vehiculo>();
     }
 }

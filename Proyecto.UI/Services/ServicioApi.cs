@@ -20,15 +20,15 @@ namespace Proyecto.UI.Services
 
         public async Task<List<Persona>> ListarPersonasAsync()
         {
-            var response = await _httpClient.GetAsync("api/Personas");
+            var response = await _httpClient.GetAsync("api/ServicioDePersonas/ObtengaLaLista");
             response.EnsureSuccessStatusCode();
             var stream = await response.Content.ReadAsStreamAsync();
             return await JsonSerializer.DeserializeAsync<List<Persona>>(stream, _jsonSerializerOptions) ?? new List<Persona>();
         }
 
-        public async Task<Persona> ObtenerPersonaPorIdAsync(int id)
+        public async Task<Persona> ObtenerPersonaPorIdentificacionAsync(string identificacion)
         {
-            var response = await _httpClient.GetAsync($"api/Personas/{id}");
+            var response = await _httpClient.GetAsync($"api/ServicioDePersonas/ConsultarPorIdentificacion/{identificacion}");
             response.EnsureSuccessStatusCode();
             var stream = await response.Content.ReadAsStreamAsync();
             return await JsonSerializer.DeserializeAsync<Persona>(stream, _jsonSerializerOptions) ?? new Persona();
@@ -36,19 +36,53 @@ namespace Proyecto.UI.Services
 
         public async Task CrearPersonaAsync(Persona persona)
         {
+
             var json = JsonSerializer.Serialize(persona);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("api/Personas", content);
+            var response = await _httpClient.PostAsync("api/ServicioDePersonas/Agregue", content);
             response.EnsureSuccessStatusCode();
         }
 
         public async Task EditarPersonaAsync(Persona persona)
         {
+
             var json = JsonSerializer.Serialize(persona);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-           
-            var response = await _httpClient.PutAsync($"api/Personas/{persona.Id}", content);
+            var response = await _httpClient.PutAsync($"api/ServicioDePersonas/EditarPorIdentificacion/{persona.Identificacion}", content);
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task<List<Vehiculo>> ListarVehiculosAsync()
+        {
+            var response = await _httpClient.GetAsync("api/ServicioDeVehiculos/Listar");
+            response.EnsureSuccessStatusCode();
+            var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonSerializer.DeserializeAsync<List<Vehiculo>>(stream, _jsonSerializerOptions) ?? new List<Vehiculo>();
+        }
+
+        public async Task<List<Vehiculo>> ListarVehiculosPorIdentificacionAsync(string identificacion)
+        {
+            var response = await _httpClient.GetAsync($"api/ServicioDeVehiculos/ConsultarPorIdentificacion/{identificacion}");
+            response.EnsureSuccessStatusCode();
+            var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonSerializer.DeserializeAsync<List<Vehiculo>>(stream, _jsonSerializerOptions) ?? new List<Vehiculo>();
+        }
+
+        public async Task CrearVehiculoAsync(Vehiculo vehiculo)
+        {
+            var json = JsonSerializer.Serialize(vehiculo);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("api/ServicioDeVehiculos/Agregar", content);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task EditarVehiculoAsync(int vehiculoId, VehiculoEditarDto vehiculoDto)
+        {
+            var json = JsonSerializer.Serialize(vehiculoDto);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PutAsync($"api/ServicioDeVehiculos/Editar/{vehiculoId}", content);
+            response.EnsureSuccessStatusCode();
+        }
+
     }
 }
