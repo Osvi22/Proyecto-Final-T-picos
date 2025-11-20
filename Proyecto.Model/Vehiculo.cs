@@ -21,7 +21,7 @@ namespace Proyecto.Model
         public string Modelo { get; set; } = null!;
 
         public int PersonaId { get; set; }
-        public Persona Persona { get; set; } = null!;
+        public virtual Persona Persona { get; set; } = null!;
 
     }
 

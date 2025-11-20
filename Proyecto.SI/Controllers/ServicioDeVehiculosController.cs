@@ -15,7 +15,7 @@ namespace Proyecto.SI.Controllers
             _admin = admin;
         }
 
-        
+
         [HttpGet("Listar")]
         public async Task<ActionResult<IEnumerable<Vehiculo>>> Listar()
         {
@@ -23,9 +23,6 @@ namespace Proyecto.SI.Controllers
             return Ok(vehiculos);
         }
 
-
-
-       
         [HttpGet("ConsultarPorIdentificacion/{identificacion}")]
         public async Task<ActionResult<IEnumerable<Vehiculo>>> ConsultarPorIdentificacion(string identificacion)
         {
@@ -37,7 +34,17 @@ namespace Proyecto.SI.Controllers
             return Ok(vehiculos);
         }
 
-        
+        [HttpGet("ObtenerPorId/{id:int}")]
+        public async Task<ActionResult<Vehiculo>> ObtenerPorId(int id)
+        {
+            var vehiculo = await _admin.ObtengaElVehiculoAsync(id);
+            if (vehiculo == null)
+            {
+                return NotFound($"No se encontró vehículo con ID {id}");
+            }
+            return Ok(vehiculo);
+        }
+
         [HttpPost("Agregar")]
         public async Task<ActionResult> Agregar([FromBody] Vehiculo vehiculo)
         {
@@ -49,7 +56,7 @@ namespace Proyecto.SI.Controllers
             return Ok("Vehículo agregado correctamente.");
         }
 
-        
+
         [HttpPut("Editar/{id}")]
         public async Task<IActionResult> Editar(int id, [FromBody] VehiculoEditarDto vehiculoDto)
         {
@@ -68,10 +75,6 @@ namespace Proyecto.SI.Controllers
             return Ok("Vehículo editado correctamente.");
         }
 
-
-
-
-        
         [HttpDelete("Eliminar/{id}")]
         public async Task<ActionResult> Eliminar(int id)
         {
@@ -84,5 +87,6 @@ namespace Proyecto.SI.Controllers
 
             return Ok("Vehículo eliminado correctamente.");
         }
+
     }
 }

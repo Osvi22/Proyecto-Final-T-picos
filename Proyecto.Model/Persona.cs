@@ -28,5 +28,6 @@ namespace Proyecto.Model
         [Range(0, double.MaxValue, ErrorMessage = "El salario debe ser mayor o igual a 0")]
         public decimal Salario { get; set; }
 
+        public virtual ICollection<Vehiculo>? Vehiculos { get; set; }
     }
 }

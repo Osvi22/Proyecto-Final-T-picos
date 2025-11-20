@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Proyecto.Model;
 
 namespace Proyecto.DA
@@ -15,25 +9,24 @@ namespace Proyecto.DA
         {
         }
 
-
-
         public DbSet<Persona> Personas { get; set; }
         public DbSet<Vehiculo> Vehiculos { get; set; }
 
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Persona>()
-                .HasKey(p => p.Id);
+            // Establecemos las claves primarias (buena práctica)
+            modelBuilder.Entity<Persona>().HasKey(p => p.Id);
+            modelBuilder.Entity<Vehiculo>().HasKey(v => v.Id);
 
+            // --- CORRECCIÓN CRÍTICA DE LA RELACIÓN ---
+            // 1. Configurar la relación desde Vehiculo (el lado "Muchos")
             modelBuilder.Entity<Vehiculo>()
-                .HasKey(v => v.Id);
+                .HasOne(v => v.Persona) // Un Vehiculo tiene UNA Persona (dueño)
+                .WithMany(p => p.Vehiculos) // Y esa Persona tiene MUCHOS Vehiculos (la propiedad que agregamos a Persona.cs)
+                .HasForeignKey(v => v.PersonaId) // La FK es PersonaId
+                .OnDelete(DeleteBehavior.Restrict); // Evita borrados en cascada no deseados
 
-            modelBuilder.Entity<Vehiculo>()
-                .HasOne(v => v.Persona)
-                .WithMany() // No hay ICollection<Vehiculo> en Persona
-                .HasForeignKey(v => v.PersonaId);
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

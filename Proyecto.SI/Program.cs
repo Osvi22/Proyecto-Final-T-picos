@@ -1,27 +1,32 @@
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Proyecto.BL;
 using Proyecto.DA;
 using Microsoft.OpenApi.Models;
-using Proyecto.SI;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson; 
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
 builder.Services.AddDbContext<DBContexto>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<Proyecto.BL.IPersonaRepository,Proyecto.DA.PersonaRepository>();
-builder.Services.AddScoped<Proyecto.BL.IAdministradorDePersonas, Proyecto.BL.AdministradorDePersonas>();
-builder.Services.AddScoped<Proyecto.BL.IVehiculoRepository, Proyecto.DA.VehiculoRepository>();
-builder.Services.AddScoped<Proyecto.BL.IAdministracionDeVehiculo, Proyecto.BL.AdministracionDeVehiculo>();
+builder.Services.AddScoped<IPersonaRepository, Proyecto.DA.PersonaRepository>();
+builder.Services.AddScoped<IAdministradorDePersonas, Proyecto.BL.AdministradorDePersonas>();
+builder.Services.AddScoped<IVehiculoRepository, Proyecto.DA.VehiculoRepository>();
+builder.Services.AddScoped<IAdministracionDeVehiculo, Proyecto.BL.AdministracionDeVehiculo>();
+
 
 var app = builder.Build();
-
 
 if (app.Environment.IsDevelopment())
 {

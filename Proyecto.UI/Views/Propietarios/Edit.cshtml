@@ -1,0 +1,34 @@
+﻿@model Proyecto.UI.Models.PropietarioEditViewModel
+
+@{
+    ViewData["Title"] = "Editar Propietario";
+}
+
+<h1>Editar Propietario</h1>
+
+<h4>Vehículo: @Model.Vehiculo.Marca @Model.Vehiculo.Modelo (@Model.Vehiculo.Placa)</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="Vehiculo.Id" />
+
+            <div class="form-group">
+                <label asp-for="PersonaIdSeleccionada" class="control-label">Asignar Nuevo Dueño</label>
+           
+                <select asp-for="PersonaIdSeleccionada" class="form-control" asp-items="@Model.ListaDePersonas">
+                    <option value="">-- Seleccione un nuevo dueño --</option>
+                </select>
+                <span asp-validation-for="PersonaIdSeleccionada" class="text-danger"></span>
+            </div>
+
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Guardar Cambios" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+            </div>
+        </form>
+    </div>
+</div>

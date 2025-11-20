@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Proyecto.Model.Vehiculo>
+
+@{
+    ViewData["Title"] = "Vehículos y Propietarios";
+}
+
+<h1>Vehículos y Propietarios</h1>
+
+<p>
+    Lista de todos los vehículos y sus dueños actuales.
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Placa</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Dueño Actual (Nombre)</th>
+            <th>Dueño (Identificación)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Placa)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Marca)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Modelo)
+                </td>
+                <td>
+                    @* Si el backend incluyó el objeto Persona, esto mostrará el nombre.
+                  Si no, se mostrará "N/A" de forma segura.
+                *@
+                    @(item.Persona?.Nombre ?? "N/A")
+                </td>
+                <td>
+                    @(item.Persona?.Identificacion ?? "N/A")
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Editar Dueño</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -73,7 +73,20 @@ namespace Proyecto.UI.Services
             var json = JsonSerializer.Serialize(vehiculo);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("api/ServicioDeVehiculos/Agregar", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Error al crear vehículo ({(int)response.StatusCode}): {errorContent}");
+            }
+        }
+        public async Task<Vehiculo> ObtenerVehiculoPorIdAsync(int id)
+        {
+
+            var response = await _httpClient.GetAsync($"api/ServicioDeVehiculos/ObtenerPorId/{id}");
             response.EnsureSuccessStatusCode();
+            var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonSerializer.DeserializeAsync<Vehiculo>(stream, _jsonSerializerOptions) ?? new Vehiculo();
         }
 
         public async Task EditarVehiculoAsync(int vehiculoId, VehiculoEditarDto vehiculoDto)
@@ -81,8 +94,12 @@ namespace Proyecto.UI.Services
             var json = JsonSerializer.Serialize(vehiculoDto);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await _httpClient.PutAsync($"api/ServicioDeVehiculos/Editar/{vehiculoId}", content);
-            response.EnsureSuccessStatusCode();
-        }
 
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Error al editar vehículo ({(int)response.StatusCode}): {errorContent}");
+            }
+        }
     }
 }
