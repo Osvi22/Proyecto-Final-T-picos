@@ -93,5 +93,20 @@ namespace Proyecto.UI.Controllers
                 return View(viewModel);
             }
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await _servicioApi.EliminarVehiculoAsync(id);
+                TempData["SuccessMessage"] = "Vehículo eliminado correctamente.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al eliminar el vehículo: {ex.Message}";
+            }
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

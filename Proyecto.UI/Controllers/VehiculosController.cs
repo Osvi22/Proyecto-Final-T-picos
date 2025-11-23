@@ -12,7 +12,6 @@ namespace Proyecto.UI.Controllers
         {
             _servicioApi = servicioApi;
         }
-
         public async Task<IActionResult> Index()
         {
             try
@@ -40,15 +39,17 @@ namespace Proyecto.UI.Controllers
                 try
                 {
                     await _servicioApi.CrearVehiculoAsync(vehiculo);
+                    TempData["SuccessMessage"] = "Vehículo creado correctamente.";
                     return RedirectToAction(nameof(Index));
                 }
-                catch (HttpRequestException ex) // Maneja el error detallado del API
+                catch (HttpRequestException ex)
                 {
-                    ModelState.AddModelError("", $"Error del Backend al crear el vehículo: {ex.Message}");
+                    ModelState.AddModelError("", $"Error del Backend: {ex.Message}");
+                    TempData["ErrorMessage"] = "No se pudo crear el vehículo.";
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", $"Error al crear el vehículo: {ex.Message}");
+                    ModelState.AddModelError("", $"Error inesperado: {ex.Message}");
                 }
             }
             return View(vehiculo);
@@ -90,7 +91,7 @@ namespace Proyecto.UI.Controllers
                     vehiculoExistente.Placa = vehiculo.Placa;
                     vehiculoExistente.Marca = vehiculo.Marca;
                     vehiculoExistente.Modelo = vehiculo.Modelo;
-                    vehiculoExistente.PersonaId = vehiculo.PersonaId; 
+                    vehiculoExistente.PersonaId = vehiculo.PersonaId;
 
                     var vehiculoDto = new VehiculoEditarDto
                     {
@@ -101,18 +102,36 @@ namespace Proyecto.UI.Controllers
                     };
 
                     await _servicioApi.EditarVehiculoAsync(id, vehiculoDto);
+
+                    TempData["SuccessMessage"] = "Vehículo actualizado correctamente.";
                     return RedirectToAction(nameof(Index));
                 }
-                catch (HttpRequestException ex) 
+                catch (HttpRequestException ex)
                 {
-                    ModelState.AddModelError("", $"Error del Backend al editar el vehículo: {ex.Message}");
+                    ModelState.AddModelError("", $"Error del Backend: {ex.Message}");
+                    TempData["ErrorMessage"] = "No se pudo actualizar el vehículo.";
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", $"Error al editar el vehículo: {ex.Message}");
+                    ModelState.AddModelError("", $"Error inesperado: {ex.Message}");
                 }
             }
             return View(vehiculo);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await _servicioApi.EliminarVehiculoAsync(id);
+                TempData["SuccessMessage"] = "Vehículo eliminado correctamente.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al eliminar el vehículo: {ex.Message}";
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

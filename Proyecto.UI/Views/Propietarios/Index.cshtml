@@ -5,47 +5,74 @@
 }
 
 <h1>Vehículos y Propietarios</h1>
+<p class="text-muted">Gestión de dueños de vehículos.</p>
 
-<p>
-    Lista de todos los vehículos y sus dueños actuales.
-</p>
-<table class="table">
-    <thead>
+<table class="table table-hover table-bordered table-datatable">
+    <thead class="table-light">
         <tr>
             <th>Placa</th>
             <th>Marca</th>
             <th>Modelo</th>
-            <th>Dueño Actual (Nombre)</th>
-            <th>Dueño (Identificación)</th>
-            <th></th>
+            <th>Dueño Actual</th>
+            <th>Identificación</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
+                <td>@Html.DisplayFor(modelItem => item.Placa)</td>
+                <td>@Html.DisplayFor(modelItem => item.Marca)</td>
+                <td>@Html.DisplayFor(modelItem => item.Modelo)</td>
+                <td>@(item.Persona?.Nombre ?? "N/A")</td>
+                <td>@(item.Persona?.Identificacion ?? "N/A")</td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Placa)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Marca)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Modelo)
-                </td>
-                <td>
-                    @* Si el backend incluyó el objeto Persona, esto mostrará el nombre.
-                  Si no, se mostrará "N/A" de forma segura.
-                *@
-                    @(item.Persona?.Nombre ?? "N/A")
-                </td>
-                <td>
-                    @(item.Persona?.Identificacion ?? "N/A")
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Editar Dueño</a>
+                    <div class="d-flex gap-2">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                            <i class="fa-solid fa-user-pen"></i> Editar Dueño
+                        </a>
+
+                        <!-- Botón de Eliminar Vehículo -->
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="form-eliminar">
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fa-solid fa-trash"></i> Eliminar
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var successMessage = '@TempData["SuccessMessage"]';
+            if (successMessage) mostrarAlertaExito(successMessage);
+
+            var errorMessage = '@TempData["ErrorMessage"]';
+            if (errorMessage) mostrarAlertaError(errorMessage);
+
+            $('.form-eliminar').submit(function (e) {
+                e.preventDefault();
+                var form = this;
+                Swal.fire({
+                    title: '¿Eliminar Vehículo?',
+                    text: "Esta acción eliminará el vehículo de la base de datos.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -108,5 +108,21 @@ namespace Proyecto.UI.Controllers
             }
             return View(persona);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(string identificacion)
+        {
+            try
+            {
+                await _servicioApi.EliminarPersonaAsync(identificacion);
+                TempData["SuccessMessage"] = "Persona eliminada correctamente.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al eliminar la persona: {ex.Message}";
+            }
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

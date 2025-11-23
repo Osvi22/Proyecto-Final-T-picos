@@ -78,14 +78,21 @@ namespace Proyecto.SI.Controllers
         [HttpDelete("Eliminar/{id}")]
         public async Task<ActionResult> Eliminar(int id)
         {
-            var vehiculo = await _admin.ObtengaElVehiculoAsync(id);
+            try
+            {
+                var vehiculo = await _admin.ObtengaElVehiculoAsync(id);
 
-            if (vehiculo == null)
-                return NotFound($"No existe el vehículo con id {id}.");
+                if (vehiculo == null)
+                    return NotFound($"No existe el vehículo con id {id}.");
 
-            await _admin.ElimineAsync(id);
+                await _admin.ElimineAsync(id);
 
-            return Ok("Vehículo eliminado correctamente.");
+                return Ok("Vehículo eliminado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"No se pudo eliminar el vehículo: {ex.Message}");
+            }
         }
 
     }

@@ -4,63 +4,80 @@
     ViewData["Title"] = "Lista de Personas";
 }
 
-<h1>Lista de Personas</h1>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Lista de Personas</h1>
+    <a asp-action="Create" class="btn btn-success"><i class="fa-solid fa-plus me-2"></i>Crear Nueva Persona</a>
+</div>
 
-<p>
-    <a asp-action="Create" class="btn btn-success">Crear Nueva Persona</a>
-</p>
-<table class="table">
-    <thead>
+<table class="table table-hover table-bordered table-datatable">
+    <thead class="table-light">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Identificacion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Apellidos)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Telefono)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Salario)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.Identificacion)</th>
+            <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+            <th>@Html.DisplayNameFor(model => model.Apellidos)</th>
+            <th>@Html.DisplayNameFor(model => model.Telefono)</th>
+            <th>@Html.DisplayNameFor(model => model.Salario)</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
+                <td>@Html.DisplayFor(modelItem => item.Identificacion)</td>
+                <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                <td>@Html.DisplayFor(modelItem => item.Apellidos)</td>
+                <td>@Html.DisplayFor(modelItem => item.Telefono)</td>
+                <td>@Html.DisplayFor(modelItem => item.Salario)</td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Identificacion)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Nombre)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Apellidos)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Telefono)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Salario)
-                </td>
-                <td>
-                    <!--
-                      ¡CAMBIO IMPORTANTE!
-                      El enlace de Edit ahora pasa 'asp-route-identificacion' (string)
-                      en lugar de 'asp-route-id' (int).
-                    -->
-                    <a asp-action="Edit" asp-route-identificacion="@item.Identificacion" class="btn btn-warning">Editar</a> |
-                    <!-- (Agregaremos los enlaces de Details y Delete después) -->
-                    <!-- <a asp-action="Details" asp-route-identificacion="@item.Identificacion">Details</a> | -->
-                    <!-- <a asp-action="Delete" asp-route-identificacion="@item.Identificacion">Delete</a> -->
+                    <div class="d-flex gap-2">
+                        <a asp-action="Edit" asp-route-identificacion="@item.Identificacion" class="btn btn-warning btn-sm">
+                            <i class="fa-solid fa-pen-to-square"></i> Editar
+                        </a>
+
+                        <!-- Botón de Eliminar con Formulario -->
+                        <form asp-action="Delete" asp-route-identificacion="@item.Identificacion" method="post" class="form-eliminar">
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fa-solid fa-trash"></i> Eliminar
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Mostrar alertas de éxito/error si existen
+            var successMessage = '@TempData["SuccessMessage"]';
+            if (successMessage) mostrarAlertaExito(successMessage);
+
+            var errorMessage = '@TempData["ErrorMessage"]';
+            if (errorMessage) mostrarAlertaError(errorMessage);
+
+            // Interceptar el envío del formulario de eliminar para mostrar confirmación
+            $('.form-eliminar').submit(function (e) {
+                e.preventDefault(); // Detener el envío automático
+                var form = this;
+
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "Esta acción no se puede deshacer.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); // Enviar el formulario si el usuario confirma
+                    }
+                });
+            });
+        });
+    </script>
+}

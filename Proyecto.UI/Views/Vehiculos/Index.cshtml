@@ -4,49 +4,83 @@
     ViewData["Title"] = "Lista de Vehículos";
 }
 
-<h1>Lista de Vehículos</h1>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Lista de Vehículos</h1>
+    <a asp-action="Create" class="btn btn-success">
+        <i class="fa-solid fa-plus me-2"></i>Registrar Nuevo Vehículo
+    </a>
+</div>
 
-<p>
-    <a asp-action="Create" class="btn btn-success">Registrar Nuevo Vehículo</a>
-</p>
-<table class="table">
-    <thead>
+<table class="table table-hover table-bordered table-datatable">
+    <thead class="table-light">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Placa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Marca)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Modelo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PersonaId)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.Placa)</th>
+            <th>@Html.DisplayNameFor(model => model.Marca)</th>
+            <th>@Html.DisplayNameFor(model => model.Modelo)</th>
+            <th>Dueño (ID)</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
+                <td>@Html.DisplayFor(modelItem => item.Placa)</td>
+                <td>@Html.DisplayFor(modelItem => item.Marca)</td>
+                <td>@Html.DisplayFor(modelItem => item.Modelo)</td>
+                <td>@Html.DisplayFor(modelItem => item.PersonaId)</td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Placa)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Marca)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Modelo)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PersonaId)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Editar</a>
+                    <div class="d-flex gap-2">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                            <i class="fa-solid fa-pen-to-square"></i> Editar
+                        </a>
+
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="form-eliminar">
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fa-solid fa-trash"></i> Eliminar
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Mostrar alertas si existen en TempData
+            var successMessage = '@TempData["SuccessMessage"]';
+            if (successMessage) {
+                mostrarAlertaExito(successMessage);
+            }
+
+            var errorMessage = '@TempData["ErrorMessage"]';
+            if (errorMessage) {
+                mostrarAlertaError(errorMessage);
+            }
+
+            // Confirmación de eliminar con SweetAlert2
+            $('.form-eliminar').submit(function (e) {
+                e.preventDefault();
+                var form = this;
+
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "Esta acción no se puede deshacer.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}

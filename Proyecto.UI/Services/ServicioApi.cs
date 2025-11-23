@@ -101,5 +101,27 @@ namespace Proyecto.UI.Services
                 throw new HttpRequestException($"Error al editar vehículo ({(int)response.StatusCode}): {errorContent}");
             }
         }
+
+        public async Task EliminarPersonaAsync(string identificacion)
+        {
+            var response = await _httpClient.DeleteAsync($"api/ServicioDePersonas/EliminarPorIdentificacion/{identificacion}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Error al eliminar persona ({(int)response.StatusCode}): {errorContent}");
+            }
+        }
+
+        public async Task EliminarVehiculoAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"api/ServicioDeVehiculos/Eliminar/{id}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Error al eliminar vehículo ({(int)response.StatusCode}): {errorContent}");
+            }
+        }
     }
 }

@@ -1,8 +1,38 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Bienvenido al Sistema de Gestión</h1>
+    <p class="lead">Administra personas, vehículos y propietarios desde un solo lugar.</p>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Personas</h5>
+                <p class="card-text">Gestiona la base de datos de clientes y empleados.</p>
+                <a asp-controller="Personas" asp-action="Index" class="btn btn-primary">Ir a Personas</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Vehículos</h5>
+                <p class="card-text">Administra el inventario de vehículos registrados.</p>
+                <a asp-controller="Vehiculos" asp-action="Index" class="btn btn-success">Ir a Vehículos</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Propietarios</h5>
+                <p class="card-text">Visualiza y asigna dueños a los vehículos.</p>
+                <a asp-controller="Propietarios" asp-action="Index" class="btn btn-warning">Ir a Propietarios</a>
+            </div>
+        </div>
+    </div>
 </div>
