@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Proyecto.Model;
 using Proyecto.UI.Services;
-using System.Diagnostics; // <-- Asegúrate de importar esto
-using Proyecto.UI.Models; // <-- Y de importar tu ErrorViewModel
+using System.Diagnostics; 
+using Proyecto.UI.Models; 
 
 namespace Proyecto.UI.Controllers
 {
@@ -24,8 +24,6 @@ namespace Proyecto.UI.Controllers
             }
             catch (Exception ex)
             {
-                // --- CORREGIDO ---
-                // Ahora pasamos el modelo correcto a la vista de Error.
                 return View("Error", new ErrorViewModel
                 {
                     Message = ex.Message,
@@ -48,11 +46,13 @@ namespace Proyecto.UI.Controllers
                 try
                 {
                     await _servicioApi.CrearPersonaAsync(persona);
+                    TempData["SuccessMessage"] = "Persona creada correctamente.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", $"Error al crear la persona: {ex.Message}");
+                    TempData["ErrorMessage"] = "No se pudo crear la persona.";
                 }
             }
             return View(persona);
@@ -76,7 +76,6 @@ namespace Proyecto.UI.Controllers
             }
             catch (Exception ex)
             {
-                // --- CORREGIDO ---
                 return View("Error", new ErrorViewModel
                 {
                     Message = ex.Message,
@@ -99,10 +98,12 @@ namespace Proyecto.UI.Controllers
                 try
                 {
                     await _servicioApi.EditarPersonaAsync(persona);
+                    TempData["SuccessMessage"] = "Persona editada correctamente.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
+                    TempData["ErrorMessage"] = $"Error al editar: {ex.Message}";
                     ModelState.AddModelError("", $"Error al editar la persona: {ex.Message}");
                 }
             }

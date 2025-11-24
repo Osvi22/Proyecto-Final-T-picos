@@ -29,11 +29,10 @@
                 <td>@(item.Persona?.Identificacion ?? "N/A")</td>
                 <td>
                     <div class="d-flex gap-2">
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm btn-confirmar-editar">
                             <i class="fa-solid fa-user-pen"></i> Editar Dueño
                         </a>
 
-                        <!-- Botón de Eliminar Vehículo -->
                         <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="form-eliminar">
                             <button type="submit" class="btn btn-danger btn-sm">
                                 <i class="fa-solid fa-trash"></i> Eliminar
@@ -49,18 +48,38 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            var successMessage = '@TempData["SuccessMessage"]';
+            var successMessage = '@Html.Raw(TempData["SuccessMessage"])';
             if (successMessage) mostrarAlertaExito(successMessage);
 
-            var errorMessage = '@TempData["ErrorMessage"]';
+            var errorMessage = '@Html.Raw(TempData["ErrorMessage"])';
             if (errorMessage) mostrarAlertaError(errorMessage);
+
+            $('.btn-confirmar-editar').click(function (e) {
+                e.preventDefault();
+                var urlDestino = $(this).attr('href');
+
+                Swal.fire({
+                    title: '¿Cambiar de Propietario?',
+                    text: "Irás a la pantalla para asignar un nuevo dueño.",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#f0ad4e',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, continuar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = urlDestino;
+                    }
+                });
+            });
 
             $('.form-eliminar').submit(function (e) {
                 e.preventDefault();
                 var form = this;
                 Swal.fire({
                     title: '¿Eliminar Vehículo?',
-                    text: "Esta acción eliminará el vehículo de la base de datos.",
+                    text: "Se eliminará el registro de este vehículo.",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',

@@ -1,5 +1,4 @@
-﻿// Inicialización de DataTables en español
-$(document).ready(function () {
+﻿$(document).ready(function () {
     $('.table-datatable').DataTable({
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
@@ -9,7 +8,6 @@ $(document).ready(function () {
     });
 });
 
-// Funciones globales para SweetAlert2
 function mostrarAlertaExito(mensaje) {
     Swal.fire({
         icon: 'success',

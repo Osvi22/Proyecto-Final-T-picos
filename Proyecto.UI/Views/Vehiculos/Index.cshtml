@@ -31,7 +31,7 @@
                 <td>@Html.DisplayFor(modelItem => item.PersonaId)</td>
                 <td>
                     <div class="d-flex gap-2">
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm btn-confirmar-editar">
                             <i class="fa-solid fa-pen-to-square"></i> Editar
                         </a>
 
@@ -50,25 +50,38 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            // Mostrar alertas si existen en TempData
-            var successMessage = '@TempData["SuccessMessage"]';
-            if (successMessage) {
-                mostrarAlertaExito(successMessage);
-            }
+            var successMessage = '@Html.Raw(TempData["SuccessMessage"])';
+            if (successMessage) mostrarAlertaExito(successMessage);
 
-            var errorMessage = '@TempData["ErrorMessage"]';
-            if (errorMessage) {
-                mostrarAlertaError(errorMessage);
-            }
+            var errorMessage = '@Html.Raw(TempData["ErrorMessage"])';
+            if (errorMessage) mostrarAlertaError(errorMessage);
 
-            // Confirmación de eliminar con SweetAlert2
+            $('.btn-confirmar-editar').click(function (e) {
+                e.preventDefault();
+                var urlDestino = $(this).attr('href');
+
+                Swal.fire({
+                    title: '¿Deseas editar este vehículo?',
+                    text: "Serás redirigido al formulario de edición.",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#f0ad4e',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, ir a editar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = urlDestino;
+                    }
+                });
+            });
+
             $('.form-eliminar').submit(function (e) {
                 e.preventDefault();
                 var form = this;
-
                 Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "Esta acción no se puede deshacer.",
+                    title: '¿Eliminar Vehículo?',
+                    text: "Esta acción eliminará el vehículo de la base de datos.",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',

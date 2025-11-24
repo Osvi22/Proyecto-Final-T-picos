@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Proyecto.Model;
+using Proyecto.UI.Models;
 using Proyecto.UI.Services;
 
 namespace Proyecto.UI.Controllers
@@ -12,6 +14,7 @@ namespace Proyecto.UI.Controllers
         {
             _servicioApi = servicioApi;
         }
+
         public async Task<IActionResult> Index()
         {
             try
@@ -25,9 +28,13 @@ namespace Proyecto.UI.Controllers
             }
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View(new Vehiculo { PersonaId = 1 });
+            var personas = await _servicioApi.ListarPersonasAsync();
+            ViewBag.ListaDePersonas = new SelectList(
+                personas.Select(p => new { Id = p.Id, NombreCompleto = $"{p.Nombre} {p.Apellidos} ({p.Identificacion})" }),
+                "Id", "NombreCompleto");
+            return View();
         }
 
         [HttpPost]
@@ -52,9 +59,13 @@ namespace Proyecto.UI.Controllers
                     ModelState.AddModelError("", $"Error inesperado: {ex.Message}");
                 }
             }
+
+            var personas = await _servicioApi.ListarPersonasAsync();
+            ViewBag.ListaDePersonas = new SelectList(
+                personas.Select(p => new { Id = p.Id, NombreCompleto = $"{p.Nombre} {p.Apellidos} ({p.Identificacion})" }),
+                "Id", "NombreCompleto", vehiculo.PersonaId);
             return View(vehiculo);
         }
-
         public async Task<IActionResult> Edit(int id)
         {
             try
@@ -64,6 +75,19 @@ namespace Proyecto.UI.Controllers
                 {
                     return NotFound();
                 }
+
+                var personas = await _servicioApi.ListarPersonasAsync();
+
+                ViewBag.ListaDePersonas = new SelectList(
+                    personas.Select(p => new {
+                        Id = p.Id,
+                        NombreCompleto = $"{p.Nombre} {p.Apellidos} ({p.Identificacion})"
+                    }),
+                    "Id",
+                    "NombreCompleto",
+                    vehiculo.PersonaId 
+                );
+
                 return View(vehiculo);
             }
             catch (Exception ex)
@@ -71,7 +95,7 @@ namespace Proyecto.UI.Controllers
                 return View("~/Views/Shared/Error.cshtml", new Models.ErrorViewModel { Message = ex.Message });
             }
         }
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Vehiculo vehiculo)
@@ -88,17 +112,12 @@ namespace Proyecto.UI.Controllers
                     var vehiculoExistente = await _servicioApi.ObtenerVehiculoPorIdAsync(id);
                     if (vehiculoExistente == null) return NotFound();
 
-                    vehiculoExistente.Placa = vehiculo.Placa;
-                    vehiculoExistente.Marca = vehiculo.Marca;
-                    vehiculoExistente.Modelo = vehiculo.Modelo;
-                    vehiculoExistente.PersonaId = vehiculo.PersonaId;
-
                     var vehiculoDto = new VehiculoEditarDto
                     {
-                        Placa = vehiculoExistente.Placa,
-                        Marca = vehiculoExistente.Marca,
-                        Modelo = vehiculoExistente.Modelo,
-                        PersonaId = vehiculoExistente.PersonaId
+                        Placa = vehiculo.Placa,
+                        Marca = vehiculo.Marca,
+                        Modelo = vehiculo.Modelo,
+                        PersonaId = vehiculo.PersonaId
                     };
 
                     await _servicioApi.EditarVehiculoAsync(id, vehiculoDto);
@@ -116,8 +135,21 @@ namespace Proyecto.UI.Controllers
                     ModelState.AddModelError("", $"Error inesperado: {ex.Message}");
                 }
             }
+
+            var personas = await _servicioApi.ListarPersonasAsync();
+            ViewBag.ListaDePersonas = new SelectList(
+                personas.Select(p => new {
+                    Id = p.Id,
+                    NombreCompleto = $"{p.Nombre} {p.Apellidos} ({p.Identificacion})"
+                }),
+                "Id",
+                "NombreCompleto",
+                vehiculo.PersonaId
+            );
+
             return View(vehiculo);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)

@@ -83,6 +83,7 @@ namespace Proyecto.UI.Controllers
                 };
 
                 await _servicioApi.EditarVehiculoAsync(id, vehiculoDto);
+                TempData["SuccessMessage"] = "Dueño actualizado correctamente.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
