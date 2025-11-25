@@ -35,25 +35,25 @@ jobs:
           path: publish_output
 
   deploy:
-    runs-on: windows-latest
-    needs: build
+  runs-on: windows-latest
+  needs: build
 
-    permissions:
-      id-token: write
-      contents: read
+  permissions:
+    id-token: write
+    contents: read
 
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: build
+  steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: build
 
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to App Service
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'ProyectoFinalApi'
-          package: .
+    - name: Deploy to App Service
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: 'ProyectoFinalApi'
+        package: .
