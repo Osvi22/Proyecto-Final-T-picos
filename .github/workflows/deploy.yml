@@ -47,13 +47,13 @@ jobs:
         with:
           name: build
 
-      - name: Login to Azure
+      - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to App Service
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'ProyectoFinalApi'
+          app-name: "ProyectoFinalApi"
           package: .
