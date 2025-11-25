@@ -38,17 +38,13 @@ jobs:
     runs-on: windows-latest
     needs: build
 
-    permissions:
-      id-token: write
-      contents: read
-
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: build
 
       - name: Azure Login
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
