@@ -1,4 +1,4 @@
-name: Build and deploy ASP.NET Core app to Azure Web App - ProyectoFinalApi
+name: Build and deploy ASP.NET Core API to Azure Web App - ProyectoFinalApi
 
 on:
   push:
@@ -20,13 +20,13 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore Proyecto.SI/Proyecto.SI.csproj
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build Proyecto.SI/Proyecto.SI.csproj --configuration Release --no-restore
 
-      - name: Publish
-        run: dotnet publish -c Release -o publish_output
+      - name: Publish ONLY the API
+        run: dotnet publish Proyecto.SI/Proyecto.SI.csproj -c Release -o publish_output
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
