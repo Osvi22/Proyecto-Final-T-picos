@@ -28,11 +28,13 @@ builder.Services.AddScoped<IAdministracionDeVehiculo, Proyecto.BL.Administracion
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+// HABILITAR SWAGGER EN PRODUCCIÓN (AZURE)
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "ProyectoFinal API v1");
+    options.RoutePrefix = "swagger";
+});
 
 app.UseHttpsRedirection();
 
