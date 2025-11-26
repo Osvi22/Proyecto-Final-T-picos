@@ -1,4 +1,4 @@
-name: Build and deploy ASP.NET Core API to Azure Web App - ProyectoFinalApi
+name: Build and deploy ASP.NET Core app to Azure Web App - ProyectoFinalApi
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
       - name: Build
         run: dotnet build Proyecto.SI/Proyecto.SI.csproj --configuration Release --no-restore
 
-      - name: Publish ONLY the API
+      - name: Publish
         run: dotnet publish Proyecto.SI/Proyecto.SI.csproj -c Release -o publish_output
 
       - name: Upload artifact
